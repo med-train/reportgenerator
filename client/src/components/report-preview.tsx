@@ -254,7 +254,7 @@ P = Pseudopods Flare ups   E = Erythema Reaction`);
                       <tr key={index}>
                         <td className="border border-gray-400 px-3 py-2 text-sm">{item.testRow || "—"}</td>
                         <td className="border border-gray-400 px-3 py-2 text-sm">{item.antigen || "—"}</td>
-                        <td className="border border-gray-400 px-3 py-2 text-center text-sm">{item.whealDiameter}</td>
+                        <td className="border border-gray-400 px-3 py-2 text-center text-sm">{item.whealDiameter || "—"}</td>
                         <td className="border border-gray-400 px-3 py-2 text-center text-sm">
                           <Badge 
                             variant={item.isPositive ? "destructive" : "secondary"}

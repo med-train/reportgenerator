@@ -91,7 +91,7 @@ export function generatePDF(
       body: formData.testItems.map((item, index) => [
         index + 1,
         item.antigen,
-        item.whealDiameter.toString(),
+        item.whealDiameter,
         item.isPositive ? 'Positive' : 'Negative',
       ]),
       styles: { fontSize: 10, cellPadding: 3 },

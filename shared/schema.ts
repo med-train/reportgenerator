@@ -25,7 +25,7 @@ export const testTemplates = pgTable("test_templates", {
   testItems: jsonb("test_items").$type<Array<{
     testRow: string;
     antigen: string;
-    whealDiameter?: number;
+    whealDiameter: string;
     isPositive?: boolean;
   }>>().notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -39,7 +39,7 @@ export const reports = pgTable("reports", {
   testItems: jsonb("test_items").$type<Array<{
     testRow: string;
     antigen: string;
-    whealDiameter: number;
+    whealDiameter: string;
     isPositive: boolean;
   }>>().notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -98,7 +98,7 @@ export type InsertReport = z.infer<typeof insertReportSchema>;
 export type TestItem = {
   testRow: string;
   antigen: string;
-  whealDiameter: number;
+  whealDiameter: string;
   isPositive: boolean;
 };
 

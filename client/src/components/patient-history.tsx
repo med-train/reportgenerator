@@ -28,7 +28,7 @@ const handleOpenReport = (report: ReportWithRelations) => {
     testName: report.testName || "",
     testItems: (report.testItems || []).map((t: any) => ({
       antigen: t.antigen,
-      whealDiameter: t.wheal ?? 0, // map DB "wheal" -> expected "whealDiameter"
+      whealDiameter: t.wheal, // map DB "wheal" -> expected "whealDiameter"
       isPositive: (t.remarks || "").toLowerCase() === "positive",
     })),
     medications: report.medications || [],

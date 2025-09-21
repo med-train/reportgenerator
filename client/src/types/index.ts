@@ -13,7 +13,7 @@ export interface FormData {
 export interface TestItemFormData {
   testRow: string;
   antigen: string;
-  whealDiameter: number;
+  whealDiameter: string;
   isPositive: boolean;
 }
 

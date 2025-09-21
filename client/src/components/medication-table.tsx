@@ -48,7 +48,7 @@ export function MedicationTable({ testItems, testName, onTestItemsChange, formDa
     const newItem: TestItem = {
       testRow: "",
       antigen: "",
-      whealDiameter: 0,
+      whealDiameter:"",
       isPositive: false,
     };
     onTestItemsChange([...testItems, newItem]);
@@ -166,10 +166,10 @@ export function MedicationTable({ testItems, testName, onTestItemsChange, formDa
                   </TableCell>
                   <TableCell>
                     <Input
-                      type="number"
-                      step="0.1"
+                     
+                     
                       value={item.whealDiameter}
-                      onChange={(e) => handleItemChange(index, 'whealDiameter', parseFloat(e.target.value) || 0)}
+                      onChange={(e) => handleItemChange(index, 'whealDiameter', e.target.value)}
                       placeholder="0.0"
                       className="border-0 focus:ring-1 focus:ring-primary"
                       data-testid={`input-wheal-diameter-${index}`}
