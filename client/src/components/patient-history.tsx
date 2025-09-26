@@ -27,6 +27,7 @@ const handleOpenReport = (report: ReportWithRelations) => {
     mobile: report.patient?.mobile || "",
     testName: report.testName || "",
     testItems: (report.testItems || []).map((t: any) => ({
+      testRow: t.testRow || "#",
       antigen: t.antigen,
       whealDiameter: t.wheal, // map DB "wheal" -> expected "whealDiameter"
       isPositive: (t.remarks || "").toLowerCase() === "positive",
@@ -41,7 +42,8 @@ const handleOpenReport = (report: ReportWithRelations) => {
     generatePDF(
       formData,
       new Date(report.createdAt).toISOString(), // ✅ fixed
-      report.resultsText || ""
+      report.resultsText || "",
+      
     );
 
     toast({

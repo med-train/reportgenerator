@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Save, Trash2, FileSpreadsheet, Eye } from "lucide-react";
+import { Plus, Save, Trash2, FileSpreadsheet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -19,7 +19,13 @@ interface MedicationTableProps {
   currentDateTime: string;
 }
 
-export function MedicationTable({ testItems, testName, onTestItemsChange, formData, currentDateTime }: MedicationTableProps) {
+export function MedicationTable({
+  testItems,
+  testName,
+  onTestItemsChange,
+  formData,
+  currentDateTime,
+}: MedicationTableProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -48,7 +54,17 @@ export function MedicationTable({ testItems, testName, onTestItemsChange, formDa
     const newItem: TestItem = {
       testRow: "",
       antigen: "",
-      whealDiameter:"",
+      whealDiameter: "",
+      isPositive: false,
+    };
+    onTestItemsChange([...testItems, newItem]);
+  };
+
+  const handleAddHeading = () => {
+    const newItem: TestItem = {
+      testRow: "heading", // special marker for heading row
+      antigen: "", // reuse antigen field to store heading text
+      whealDiameter: "",
       isPositive: false,
     };
     onTestItemsChange([...testItems, newItem]);
@@ -100,16 +116,9 @@ export function MedicationTable({ testItems, testName, onTestItemsChange, formDa
           </CardTitle>
           <div className="flex space-x-2">
             <ReportPreviewModal formData={formData} currentDateTime={currentDateTime}>
-              {/* <Button 
-                className="bg-blue-600 text-white hover:bg-blue-700"
-                size="sm"
-                data-testid="button-preview-report"
-              >
-                <Eye className="h-4 w-4 mr-1" />
-                Preview
-              </Button> */}
+              {/* Optional Preview button can go here */}
             </ReportPreviewModal>
-            <Button 
+            <Button
               onClick={handleAddRow}
               className="bg-primary text-white hover:bg-blue-700"
               size="sm"
@@ -118,7 +127,16 @@ export function MedicationTable({ testItems, testName, onTestItemsChange, formDa
               <Plus className="h-4 w-4 mr-1" />
               Add Row
             </Button>
-            <Button 
+            <Button
+              onClick={handleAddHeading}
+              className="bg-purple-600 text-white hover:bg-purple-700"
+              size="sm"
+              data-testid="button-add-heading"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add Heading
+            </Button>
+            <Button
               onClick={handleSaveTemplate}
               disabled={saveTemplateMutation.isPending}
               className="bg-green-600 text-white hover:bg-green-700"
@@ -144,62 +162,89 @@ export function MedicationTable({ testItems, testName, onTestItemsChange, formDa
               </TableRow>
             </TableHeader>
             <TableBody>
-              {testItems.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Input
-                      value={item.testRow}
-                      onChange={(e) => handleItemChange(index, 'testRow', e.target.value)}
-                      placeholder="Test row..."
-                      className="border-0 focus:ring-1 focus:ring-primary"
-                      data-testid={`input-test-row-${index}`}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      value={item.antigen}
-                      onChange={(e) => handleItemChange(index, 'antigen', e.target.value)}
-                      placeholder="Antigen name..."
-                      className="border-0 focus:ring-1 focus:ring-primary"
-                      data-testid={`input-antigen-${index}`}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                     
-                     
-                      value={item.whealDiameter}
-                      onChange={(e) => handleItemChange(index, 'whealDiameter', e.target.value)}
-                      placeholder="0.0"
-                      className="border-0 focus:ring-1 focus:ring-primary"
-                      data-testid={`input-wheal-diameter-${index}`}
-                    />
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <Switch
-                        checked={item.isPositive}
-                        onCheckedChange={(checked) => handleItemChange(index, 'isPositive', checked)}
-                        data-testid={`switch-positive-${index}`}
+              {testItems.map((item, index) =>
+                item.testRow === "heading" ? (
+                  <TableRow key={index} className="bg-gray-100">
+                    <TableCell colSpan={5} className="text-center font-semibold text-gray-800">
+                      <div className="flex justify-between items-center">
+                        <Input
+                          value={item.antigen}
+                          onChange={(e) => handleItemChange(index, "antigen", e.target.value)}
+                          placeholder="Enter heading"
+                          className="text-center border-0 text-lg font-bold focus:ring-1 focus:ring-primary"
+                          data-testid={`input-heading-${index}`}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveRow(index)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          data-testid={`button-remove-heading-${index}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Input
+                        value={item.testRow}
+                        onChange={(e) => handleItemChange(index, "testRow", e.target.value)}
+                        placeholder="Test row..."
+                        className="border-0 focus:ring-1 focus:ring-primary"
+                        data-testid={`input-test-row-${index}`}
                       />
-                      <span className={`text-sm ${item.isPositive ? 'text-green-600 font-medium' : 'text-gray-700'}`}>
-                        {item.isPositive ? 'Positive' : 'Negative'}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveRow(index)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      data-testid={`button-remove-row-${index}`}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={item.antigen}
+                        onChange={(e) => handleItemChange(index, "antigen", e.target.value)}
+                        placeholder="Antigen name..."
+                        className="border-0 focus:ring-1 focus:ring-primary"
+                        data-testid={`input-antigen-${index}`}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={item.whealDiameter}
+                        onChange={(e) => handleItemChange(index, "whealDiameter", e.target.value)}
+                        placeholder="0.0"
+                        className="border-0 focus:ring-1 focus:ring-primary"
+                        data-testid={`input-wheal-diameter-${index}`}
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <Switch
+                          checked={item.isPositive}
+                          onCheckedChange={(checked) => handleItemChange(index, "isPositive", checked)}
+                          data-testid={`switch-positive-${index}`}
+                        />
+                        <span
+                          className={`text-sm ${
+                            item.isPositive ? "text-green-600 font-medium" : "text-gray-700"
+                          }`}
+                        >
+                          {item.isPositive ? "Positive" : "Negative"}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveRow(index)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        data-testid={`button-remove-row-${index}`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
             </TableBody>
           </Table>
         </div>
